@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { getLocalStorage, setLocalStorage, isFirstLoad } from '../utils/localStorage'
+import { getLocalStorage, setLocalStorage} from '../utils/localStorage'
 
 export const AuthContext = createContext()
 
@@ -9,13 +9,6 @@ const AuthProvider = ({ children }) => {
 
     // Initialize localStorage if needed
     useEffect(() => {
-        // Check if we need to initialize localStorage
-        if (isFirstLoad()) {
-            // If not initialized, set the default data
-            setLocalStorage()
-        }
-        
-        // Get the data from localStorage
         const { employees } = getLocalStorage()
         setUserData(employees)
         setLoading(false)
