@@ -1,6 +1,4 @@
-// Notification service to handle notification operations
 
-// Add a new notification
 export const addNotification = (message) => {
     // Get existing notifications
     const storedNotifications = localStorage.getItem('notifications');
