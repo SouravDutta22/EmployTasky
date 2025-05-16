@@ -3,35 +3,51 @@ import { AuthContext } from '../../context/AuthProvider'
 
 const CreateTask = () => {
     const [userData, setUserData] = useContext(AuthContext)
-
-    const [taskTitle, setTaskTitle] = useState('')
-    const [taskDescription, setTaskDescription] = useState('')
-    const [taskDate, setTaskDate] = useState('')
-    const [assignTo, setAssignTo] = useState('')
-    const [category, setCategory] = useState('')
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [formData, setFormData] = useState({
+        taskTitle: '',
+        taskDescription: '',
+        taskDate: '',
+        deadline: '',
+        assignTo: '',
+        category: ''
+    })
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState('')
+
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }))
+    }
 
     const submitHandler = (e) => {
         e.preventDefault()
         
         // Validate form
-        if (!taskTitle || !taskDescription || !taskDate || !assignTo || !category) {
+        if (!formData.taskTitle || !formData.taskDescription || !formData.taskDate || 
+            !formData.deadline || !formData.assignTo || !formData.category) {
             setError('All fields are required')
             setTimeout(() => setError(''), 3000)
             return
         }
 
+        setIsSubmitting(true)
+
         // Create new task object
         const newTask = { 
-            taskTitle, 
-            taskDescription, 
-            taskDate, 
-            category, 
+            taskTitle: formData.taskTitle, 
+            taskDescription: formData.taskDescription, 
+            taskDate: formData.taskDate,
+            deadline: formData.deadline,
+            category: formData.category, 
             active: false, 
             newTask: true, 
             failed: false, 
-            completed: false 
+            completed: false,
+            timestamp: Date.now()
         }
 
         // Make a copy of the user data array
@@ -40,7 +56,7 @@ const CreateTask = () => {
         
         // Find the employee and add the task
         updatedData.forEach(function (employee) {
-            if (assignTo === employee.firstName) {
+            if (formData.assignTo === employee.firstName) {
                 employee.tasks.push(newTask)
                 employee.taskCounts.newTask = employee.taskCounts.newTask + 1
                 employeeFound = true
@@ -48,7 +64,8 @@ const CreateTask = () => {
         })
         
         if (!employeeFound) {
-            setError(`Employee "${assignTo}" not found`)
+            setError(`Employee "${formData.assignTo}" not found`)
+            setIsSubmitting(false)
             setTimeout(() => setError(''), 3000)
             return
         }
@@ -56,121 +73,160 @@ const CreateTask = () => {
         // Update context (which will also update localStorage)
         setUserData(updatedData)
         
-        // Show success message
-        setSuccess(true)
-        setTimeout(() => setSuccess(false), 3000)
-        
-        // Reset form
-        setTaskTitle('')
-        setCategory('')
-        setAssignTo('')
-        setTaskDate('')
-        setTaskDescription('')
+        setTimeout(() => {
+            setIsSubmitting(false)
+            // Show success message
+            setSuccess(true)
+            setTimeout(() => setSuccess(false), 3000)
+            
+            // Reset form
+            setFormData({
+                taskTitle: '',
+                taskDescription: '',
+                taskDate: '',
+                deadline: '',
+                assignTo: '',
+                category: ''
+            })
+        }, 1000)
     }
 
     return (
-        <div className='p-5 bg-[#1c1c1c] mt-5 rounded'>
-            <h2 className="text-xl font-semibold mb-4">Create New Task</h2>
-            
+        <div className='p-2 bg-black rounded'>
             {error && (
-                <div className="p-3 mb-4 bg-red-600 text-white rounded">
+                <div className="p-2 mb-3 bg-red-600 font-Poppins text-white text-sm rounded text-center sm:text-left">
                     {error}
                 </div>
             )}
             
             {success && (
-                <div className="p-3 mb-4 bg-green-600 text-white rounded">
+                <div className="p-2 pl-4 mb-3 bg-green-800 font-Poppins text-white text-sm rounded-2xl text-center sm:text-left">
                     Task created successfully!
                 </div>
             )}
             
-            <form onSubmit={(e) => {
-                submitHandler(e)
-            }}
-                className='flex flex-wrap w-full items-start justify-between'
-            >
-                <div className='w-1/2'>
-                    <div>
-                        <h3 className='text-sm text-gray-300 mb-0.5'>Task Title</h3>
-                        <input
-                            value={taskTitle}
-                            onChange={(e) => {
-                                setTaskTitle(e.target.value)
-                            }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' 
-                            type="text" 
-                            placeholder='Make a UI design'
-                        />
+            <div className="bg-gray-900 rounded-2xl p-3 sm:p-4 sm:pt-8 mt-2 mr-2 pl-3 sm:pl-6">
+   
+                <form onSubmit={submitHandler} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block mb-2 sm:mb-3 font-Poppins text-xs sm:text-sm font-medium text-gray-300">Task Title</label>
+                            <input
+                                name="taskTitle"
+                                value={formData.taskTitle}
+                                onChange={handleChange}
+                                className="w-full px-2 sm:px-3 py-2 sm:py-3 text-xs sm:text-sm bg-gray-800 rounded-lg outline-none placeholder:text-white placeholder:font-Poppins"
+                                type="text" 
+                                placeholder="Enter task title"
+                                required
+                            />
+                        </div>
+                        
+                        <div>
+                            <label className="block mb-2 sm:mb-3 font-Poppins text-xs sm:text-sm font-medium text-gray-300">Category</label>
+                            <select
+                                name="category"
+                                value={formData.category}
+                                onChange={handleChange}
+                                className="w-full px-2 sm:px-4 py-2 sm:py-3 font-Poppins text-xs sm:text-sm bg-gray-800 rounded-lg outline-none appearance-none"
+                                style={{
+                                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                                    backgroundPosition: `right 0.5rem center`,
+                                    backgroundRepeat: `no-repeat`,
+                                    backgroundSize: `1.5em 1.5em`,
+                                    paddingRight: `2.5rem`
+                                }}
+                                required
+                            >
+                                <option value="" className='font-Poppins text-xs sm:text-sm'>Select category</option>
+                                <option value="Design" className='font-Poppins text-xs sm:text-sm'>Design</option>
+                                <option value="Development" className='font-Poppins text-xs sm:text-sm'>Development</option>
+                                <option value="Database" className='font-Poppins text-xs sm:text-sm'>Database</option>
+                                <option value="DevOps" className='font-Poppins text-xs sm:text-sm'>DevOps</option>
+                                <option value="Meeting" className='font-Poppins text-xs sm:text-sm'>Meeting</option>
+                                <option value="QA" className='font-Poppins text-xs sm:text-sm'>QA</option>
+                                <option value="Documentation" className='font-Poppins text-xs sm:text-sm'>Documentation</option>
+                                <option value="Presentation" className='font-Poppins text-xs sm:text-sm'>Presentation</option>
+                                <option value="Support" className='font-Poppins text-xs sm:text-sm'>Support</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label className="block mb-2 sm:mb-3 font-Poppins text-xs sm:text-sm font-medium text-gray-300">Assign To</label>
+                            <select
+                                name="assignTo"
+                                value={formData.assignTo}
+                                onChange={handleChange}
+                                className="w-full px-2 sm:px-3 py-2 sm:py-3 font-Poppins text-xs sm:text-sm bg-gray-800 rounded-lg outline-none border-none appearance-none"
+                                style={{
+                                    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                                    backgroundPosition: `right 0.5rem center`,
+                                    backgroundRepeat: `no-repeat`,
+                                    backgroundSize: `1.5em 1.5em`,
+                                    paddingRight: `2.5rem`
+                                }}
+                                required
+                            >
+                                <option value="" className='font-Poppins text-xs sm:text-sm'>Select employee</option>
+                                {userData && userData.map((employee, idx) => (
+                                    <option key={idx} value={employee.firstName} className='font-Poppins text-xs sm:text-sm'>
+                                        {employee.firstName}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div>
+                                <label className="block mb-2 sm:mb-3 font-Poppins text-xs sm:text-sm font-sm text-gray-300">Start Date</label>
+                                <input
+                                    name="taskDate"
+                                    value={formData.taskDate}
+                                    onChange={handleChange}
+                                    className="w-full px-2 sm:px-3 py-2 sm:py-3 font-Poppins text-xs sm:text-sm bg-gray-800 rounded-lg outline-none"
+                                    type="date"
+                                    required
+                                />
+                            </div>
+                            
+                            <div>
+                                <label className="block mb-2 sm:mb-3 font-Poppins text-xs sm:text-sm font-sm text-gray-300">Deadline</label>
+                                <input
+                                    name="deadline"
+                                    value={formData.deadline}
+                                    onChange={handleChange}
+                                    className="w-full px-2 sm:px-3 py-2 sm:py-3 font-Poppins text-xs sm:text-sm bg-gray-800 rounded-lg outline-none"
+                                    type="date"
+                                    required
+                                />
+                            </div>
+                        </div>
                     </div>
+                    
                     <div>
-                        <h3 className='text-sm text-gray-300 mb-0.5'>Date</h3>
-                        <input
-                            value={taskDate}
-                            onChange={(e) => {
-                                setTaskDate(e.target.value)
-                            }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-transparent border-[1px] border-gray-400 mb-4' 
-                            type="date" 
-                        />
+                        <label className="block mb-2 sm:mb-3 font-Poppins text-xs sm:text-sm font-medium text-gray-300">Task Description</label>
+                        <textarea 
+                            name="taskDescription"
+                            value={formData.taskDescription}
+                            onChange={handleChange}
+                            rows="3"
+                            className="w-full px-2 sm:px-3 py-2 font-Poppins text-xs sm:text-sm bg-gray-800 rounded-lg outline-none placeholder:text-white"
+                            placeholder="Enter task description"
+                            required
+                        ></textarea>
                     </div>
-                    <div>
-                        <h3 className='text-sm text-gray-300 mb-0.5'>Assign to</h3>
-                        <select
-                            value={assignTo}
-                            onChange={(e) => {
-                                setAssignTo(e.target.value)
-                            }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-[#2c2c2c] border-[1px] border-gray-400 mb-4'
+                    
+                    <div className="flex justify-center sm:justify-end">
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className={`px-4 sm:px-5 py-1.5 sm:py-2 font-Poppins text-sm sm:text-normal rounded-3xl cursor-pointer ${isSubmitting ? 'bg-gray-600' : 'bg-blue-800 hover:bg-blue-700'} transition-colors`}
                         >
-                            <option value="">Select Employee</option>
-                            {userData && userData.map((employee, idx) => (
-                                <option key={idx} value={employee.firstName}>
-                                    {employee.firstName}
-                                </option>
-                            ))}
-                        </select>
+                            {isSubmitting ? 'Creating...' : 'Create Task'}
+                        </button>
                     </div>
-                    <div>
-                        <h3 className='text-sm text-gray-300 mb-0.5'>Category</h3>
-                        <select
-                            value={category}
-                            onChange={(e) => {
-                                setCategory(e.target.value)
-                            }}
-                            className='text-sm py-1 px-2 w-4/5 rounded outline-none bg-[#2c2c2c] border-[1px] border-gray-400 mb-4'
-                        >
-                            <option value="">Select Category</option>
-                            <option value="Design">Design</option>
-                            <option value="Development">Development</option>
-                            <option value="Database">Database</option>
-                            <option value="DevOps">DevOps</option>
-                            <option value="Meeting">Meeting</option>
-                            <option value="QA">QA</option>
-                            <option value="Documentation">Documentation</option>
-                            <option value="Presentation">Presentation</option>
-                            <option value="Support">Support</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div className='w-2/5 flex flex-col items-start'>
-                    <h3 className='text-sm text-gray-300 mb-0.5'>Description</h3>
-                    <textarea 
-                        value={taskDescription}
-                        onChange={(e) => {
-                            setTaskDescription(e.target.value)
-                        }} 
-                        className='w-full h-44 text-sm py-2 px-4 rounded outline-none bg-transparent border-[1px] border-gray-400' 
-                        placeholder="Enter task description"
-                    ></textarea>
-                    <button 
-                        className='bg-emerald-500 py-3 hover:bg-emerald-600 px-5 rounded text-sm mt-4 w-full'
-                        type="submit"
-                    >
-                        Create Task
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     )
 }
