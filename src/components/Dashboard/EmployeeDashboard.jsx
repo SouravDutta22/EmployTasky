@@ -5,6 +5,7 @@ import TaskList from '../TaskList/TaskList'
 import { AuthContext } from '../../context/AuthProvider'
 import LeaveRequestForm from './LeaveRequestForm'
 import NotificationDashboard from './NotificationDashboard'
+import Time from '../other/Time'
 import { getUserNotifications } from '../../utils/notificationService'
 
 const EmployeeDashboard = (props) => {
@@ -51,8 +52,13 @@ const EmployeeDashboard = (props) => {
             default:
                 return (
                     <>
+                     <Header 
+                            changeUser={props.changeUser} 
+                            data={currentEmployee || props.data}
+                            isAdmin={false}
+                        />
                         <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
-                            <h1 className="text-xl sm:text-2xl font-bold text-emerald-500">Employee Dashboard</h1>
+                            <h1 className="text-xl sm:text-2xl font-normal text-emerald-500">Employee Dashboard</h1>
                             <div className="flex flex-wrap gap-3 w-full sm:w-auto justify-end">
                                 <button 
                                     onClick={() => setView('notifications')}
@@ -70,20 +76,17 @@ const EmployeeDashboard = (props) => {
                                 </button>
                                 <button 
                                     onClick={() => setView('leave')}
-                                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-md flex items-center text-sm sm:text-base"
+                                    className="bg-emerald-800 hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-md flex items-center text-sm sm:text-base"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                     Request Leave
                                 </button>
+                               
                             </div>
                         </div>
-                        <Header 
-                            changeUser={props.changeUser} 
-                            data={currentEmployee || props.data}
-                            isAdmin={false}
-                        />
+                        <Time />
                         <TaskListNumbers data={currentEmployee || props.data} />
                         <TaskList data={currentEmployee || props.data} />
                     </>
@@ -92,7 +95,7 @@ const EmployeeDashboard = (props) => {
     };
     
     return (
-        <div className='p-3 sm:p-5 md:p-10 bg-[#1C1C1C] min-h-screen text-white'>
+        <div className='p-3 sm:p-5 md:p-10 bg-black min-h-screen font-Poppins text-white'>
             {renderContent()}
         </div>
     )
