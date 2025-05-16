@@ -20,6 +20,7 @@ const SignUp = ({ toggleForm }) => {
             setError('All fields are required')
             return
         }
+    
         
         if (password !== confirmPassword) {
             setError('Passwords do not match')
@@ -27,7 +28,7 @@ const SignUp = ({ toggleForm }) => {
         }
         
         // Check if email already exists
-        if (userData.some(user => user.email === email)) {
+        if (userData.some(user =>user.email === email)) {
             setError('Email already exists')
             return
         }
@@ -84,17 +85,17 @@ const SignUp = ({ toggleForm }) => {
 
     return (
         <>
-            <h2 className='text-2xl font-bold text-center mb-6 text-emerald-600'>Create Employee Account</h2>
-            {error && <p className='text-red-500 text-sm mb-4 text-center'>{error}</p>}
+            <h2 className='text-xl md:text-2xl font-bold text-center mb-4 md:mb-6 text-emerald-600'>Create Employee Account</h2>
+            {error && <p className='text-red-500 text-sm mb-3 md:mb-4 text-center'>{error}</p>}
             <form 
             onSubmit={(e) => submitHandler(e)}
-            className='flex flex-col items-center justify-center'
+            className='flex flex-col items-center justify-center w-full'
             >
                 <input 
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required 
-                className='text-gray-400 outline-none bg-transparent border-2 border-emerald-600 font-medium text-lg py-2 px-6 rounded-full mb-3 placeholder:text-gray-400' 
+                className='w-full text-gray-400 outline-none bg-transparent border-2 border-emerald-600 font-medium text-base md:text-lg py-2 px-4 md:px-6 rounded-full mb-3 placeholder:text-gray-400' 
                 type="text" 
                 placeholder='Full Name' 
                 />
@@ -103,7 +104,7 @@ const SignUp = ({ toggleForm }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
-                className='text-gray-400 outline-none bg-transparent border-2 border-emerald-600 font-medium text-lg py-2 px-6 rounded-full mb-3 placeholder:text-gray-400' 
+                className='w-full text-gray-400 outline-none bg-transparent border-2 border-emerald-600 font-medium text-base md:text-lg py-2 px-4 md:px-6 rounded-full mb-3 placeholder:text-gray-400' 
                 type="email" 
                 placeholder='Email Address' 
                 />
@@ -112,7 +113,7 @@ const SignUp = ({ toggleForm }) => {
                 value={position}
                 onChange={(e) => setPosition(e.target.value)}
                 required 
-                className='text-gray-400 outline-none bg-transparent border-2 border-emerald-600 font-medium text-lg py-2 px-6 rounded-full mb-3 placeholder:text-gray-400' 
+                className='w-full text-gray-400 outline-none bg-transparent border-2 border-emerald-600 font-medium text-base md:text-lg py-2 px-4 md:px-6 rounded-full mb-3 placeholder:text-gray-400' 
                 type="text" 
                 placeholder='Position' 
                 />
@@ -121,7 +122,7 @@ const SignUp = ({ toggleForm }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required 
-                className='text-gray-400 outline-none bg-transparent border-2 border-emerald-600 font-medium text-lg py-2 px-6 rounded-full mb-3 placeholder:text-gray-400' 
+                className='w-full text-gray-400 outline-none bg-transparent border-2 border-emerald-600 font-medium text-base md:text-lg py-2 px-4 md:px-6 rounded-full mb-3 placeholder:text-gray-400' 
                 type="password" 
                 placeholder='Password' 
                 />
@@ -130,21 +131,21 @@ const SignUp = ({ toggleForm }) => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required 
-                className='text-gray-400 outline-none bg-transparent border-2 border-emerald-600 font-medium text-lg py-2 px-6 rounded-full mb-5 placeholder:text-gray-400' 
+                className='w-full text-gray-400 outline-none bg-transparent border-2 border-emerald-600 font-medium text-base md:text-lg py-2 px-4 md:px-6 rounded-full mb-4 md:mb-5 placeholder:text-gray-400' 
                 type="password" 
                 placeholder='Confirm Password' 
                 />
                 
-                <button className='mt-2 text-white border-none outline-none hover:bg-emerald-700 font-semibold bg-emerald-600 text-lg py-2 px-8 w-full rounded-full placeholder:text-white'>
+                <button className='mt-2 text-white border-none outline-none hover:bg-emerald-700 font-semibold bg-emerald-600 text-base md:text-lg py-2 px-6 md:px-8 w-full rounded-full placeholder:text-white'>
                     Create Employee Account
                 </button>
                 
-                <p className='mt-4 text-sm text-cyan-100'>
+                <p className='mt-4 text-xs md:text-sm text-cyan-100'>
                     Already have an account? 
                     <button 
                         type="button"
                         onClick={toggleForm} 
-                        className='text-emerald-600 font-medium ml-2 hover:underline'>
+                        className='text-emerald-600 font-medium ml-1 md:ml-2 hover:underline'>
                         Login
                     </button>
                 </p>
