@@ -17,8 +17,8 @@ const AuthForm = ({ handleLogin }) => {
     }
     
     return (
-        <div className='flex h-screen w-screen items-center justify-center bg-[#1c1c1c]'>
-            <div className='border-2 rounded-xl border-emerald-600 p-14'>
+        <div className='flex h-screen w-screen items-center justify-center bg-black px-4'>
+            <div className='border-2 rounded-xl border-emerald-600 p-4 sm:p-8 md:p-12 lg:p-14 w-full max-w-md'>
                 {isLogin && (
                     <RoleToggle isAdmin={isAdmin} toggleRole={toggleRole} />
                 )}
