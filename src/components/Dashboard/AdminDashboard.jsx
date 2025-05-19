@@ -17,28 +17,30 @@ const AdminDashboard = (props) => {
     // Set current user in localStorage for consistency
     React.useEffect(() => {
         // Store admin as current user
-        const adminUser = userData.find(user => user.role === 'admin');
-        if (adminUser) {
-            localStorage.setItem('currentUser', JSON.stringify(adminUser));
+        if (userData && userData.length > 0) {
+            const adminUser = userData.find(user => user.role === 'admin');
+            if (adminUser) {
+                localStorage.setItem('currentUser', JSON.stringify(adminUser));
+            }
+            
+            // Get admin notification count
+            const notifications = getUserNotifications('admin');
+            const unreadCount = notifications.filter(n => !n.read).length;
+            setNotificationCount(unreadCount);
+            
+            // Listen for notification updates
+            const handleNotificationUpdate = () => {
+                const updatedNotifications = getUserNotifications('admin');
+                const updatedUnreadCount = updatedNotifications.filter(n => !n.read).length;
+                setNotificationCount(updatedUnreadCount);
+            };
+            
+            window.addEventListener('notificationUpdate', handleNotificationUpdate);
+            
+            return () => {
+                window.removeEventListener('notificationUpdate', handleNotificationUpdate);
+            };
         }
-        
-        // Get admin notification count
-        const notifications = getUserNotifications('admin');
-        const unreadCount = notifications.filter(n => !n.read).length;
-        setNotificationCount(unreadCount);
-        
-        // Listen for notification updates
-        const handleNotificationUpdate = () => {
-            const updatedNotifications = getUserNotifications('admin');
-            const updatedUnreadCount = updatedNotifications.filter(n => !n.read).length;
-            setNotificationCount(updatedUnreadCount);
-        };
-        
-        window.addEventListener('notificationUpdate', handleNotificationUpdate);
-        
-        return () => {
-            window.removeEventListener('notificationUpdate', handleNotificationUpdate);
-        };
     }, [userData]);
     
     const renderContent = () => {
