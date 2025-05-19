@@ -14,7 +14,9 @@ const EmployeeDashboard = (props) => {
     const [notificationCount, setNotificationCount] = useState(0);
     
     // Find the current employee data from context
-    const currentEmployee = userData.find(user => user.id === props.data.id);
+    const currentEmployee = userData && userData.length > 0 && props.data?.id 
+        ? userData.find(user => user.id === props.data.id)
+        : null;
     
     // Store current user in localStorage for other components to access
     useEffect(() => {
