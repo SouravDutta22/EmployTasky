@@ -2,10 +2,10 @@ import React, { useContext } from 'react'
 import { AuthContext } from '../../context/AuthProvider'
 
 const AllTask = () => {
-   const [userData, setUserData] = useContext(AuthContext)
+   const [userData] = useContext(AuthContext)
    
-   if (!userData) {
-     return <div>Loading...</div>
+   if (!userData || userData.length === 0) {
+     return <div className="text-center py-4">No employee data available</div>
    }
    
   return (
@@ -19,13 +19,16 @@ const AllTask = () => {
         </div>
         <div className='min-w-max'>
         {userData.map(function(elem, idx){
+            
+            const taskCounts = elem.taskCounts || { newTask: 0, active: 0, completed: 0, failed: 0 };
+            
             return <div key={idx} className='mb-2 py-2 px-2 sm:px-4 flex justify-between rounded-xl hover:bg-blue-950 transition-colors'>
-            <h2 className='font-Poppins text-left text-xs sm:text-sm font-sm w-1/5 min-w-[100px]'>{elem.firstName}</h2>
-            <h3 className='font-Poppins text-center text-xs sm:text-sm font-sm w-1/5 min-w-[80px]'>{elem.taskCounts.newTask}</h3>
-            <h5 className='font-Poppins text-center text-xs sm:text-sm font-sm w-1/5 min-w-[80px]'>{elem.taskCounts.active}</h5>
-            <h5 className='font-Poppins text-center text-xs sm:text-sm font-sm w-1/5 min-w-[80px]'>{elem.taskCounts.completed}</h5>
-            <h5 className='font-Poppins text-center text-xs sm:text-sm font-sm w-1/5 min-w-[80px]'>{elem.taskCounts.failed}</h5>
-        </div>
+                <h2 className='font-Poppins text-left text-xs sm:text-sm font-sm w-1/5 min-w-[100px]'>{elem.firstName}</h2>
+                <h3 className='font-Poppins text-center text-xs sm:text-sm font-sm w-1/5 min-w-[80px]'>{taskCounts.newTask}</h3>
+                <h5 className='font-Poppins text-center text-xs sm:text-sm font-sm w-1/5 min-w-[80px]'>{taskCounts.active}</h5>
+                <h5 className='font-Poppins text-center text-xs sm:text-sm font-sm w-1/5 min-w-[80px]'>{taskCounts.completed}</h5>
+                <h5 className='font-Poppins text-center text-xs sm:text-sm font-sm w-1/5 min-w-[80px]'>{taskCounts.failed}</h5>
+            </div>
         })}
         </div>
     </div>
