@@ -4,13 +4,15 @@ import { getLocalStorage, setLocalStorage} from '../utils/localStorage'
 export const AuthContext = createContext()
 
 const AuthProvider = ({ children }) => {
-    const [userData, setUserData] = useState(null)
+    const [userData, setUserData] = useState([])
     const [loading, setLoading] = useState(true)
 
     // Initialize localStorage if needed
     useEffect(() => {
         const { employees } = getLocalStorage()
-        setUserData(employees)
+        
+        // Ensure we always have an array, even if localStorage returns null
+        setUserData(employees || [])
         setLoading(false)
     }, [])
     
